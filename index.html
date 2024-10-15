@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <title>weather app</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-size: 40px;
+    }
+
+    body {
+      background: #222;
+      font-family: "Poppins", sans-serif;
+    }
+    .card {
+      width: 90%;
+      max-width: 470px;
+      background-image: linear-gradient(135deg, #3ab5b0 0%, #3d99be 31%, #56317a 100%);
+      color: #fff;
+      margin: 100px auto 0;
+      border-radius: 20px;
+      text-align: center;
+      padding: 40px 35px;
+    }
+    .search {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .search input {
+      border: 0;
+      outline: 0;
+      background: #ebfffc;
+      color: #555;
+      padding: 10px 25px;
+      height: 60px;
+      border-radius: 30px;
+      flex: 1;
+      margin-right: 16px;
+      font-size: 18px;
+    }
+    .search button {
+      border: 0;
+      outline: 0;
+      background: #ebfffc;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+    .search button img {
+      width: 16px;
+    }
+    .weather-icon {
+      width: 170px;
+      margin-top: 30px;
+    }
+
+    .weather-icon h1 {
+      font-size: 80px;
+      font-weight: 500;
+    }
+    .weather-icon h2 {
+      font-size: 45px;
+      font-weight: 400;
+      margin-top: -10px;
+    }
+    .details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      margin-top: 50px;
+    }
+    .col {
+      display: flex;
+      align-items: center;
+      text-align: left;
+    }
+
+    .col img {
+      width: 40px;
+      margin-right: 10px;
+    }
+
+    .humidity, .wind {
+      font-size: 25px;
+      margin-top: -6px;
+    }
+    .hump, .humw {
+      font-size: 20px;
+    }
+    @media(max-width:480px) {
+      .search input {
+        width: 90%;
+      }
+      .weather-icon {
+        margin-top: 20px;
+      }
+      .weather-icon h1 {
+        font-size: 40px;
+        font-weight: 300;
+      }
+      .weather-icon h2 {
+        font-size: 15px;
+        font-weight: 200;
+        margin-top: -10px;
+      }
+      .humidity, .wind {
+        font-size: 20px;
+        margin-top: -6px;
+        margin-right: 15px;
+      }
+
+      .hump, .humw {
+        font-size: 15px;
+      }
+      .card {
+        padding: 35px 35px;
+        margin-top: 10px;
+        width: 90%;
+      }
+      .weather-icon {
+        width: 130px;
+      }
+      .temp {
+        font-size: 25px;
+      }
+      .city {
+        font-size: 30px;
+      }
+      .col img {
+        width: 32px;
+        margin-right: 15px;
+      }
+      .col {
+        margin-right: 13px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="search">
+      <input type="text" placeholder="enter city name" spellcheck="false">
+      <button><img src="https://i.postimg.cc/Gp7d9Hsq/search.png" alt=""></button>
+    </div>
+    <div class="weather">
+      <img src="https://i.postimg.cc/tT6c13dr/mist.png" class="weather-icon">
+      <h1 class="temp" style="margin-bottom:5px;">--</h1>
+      <h2 class="city"></h2>
+      <div class="details">
+        <div class="col">
+          <img src="https://i.postimg.cc/cCM5hdbw/humidity.png">
+          <div>
+            <p class="humidity">
+              --
+            </p>
+            <p class="hump">
+              humidity
+            </p>
+          </div>
+        </div>
+        <div class="col">
+          <img src="https://i.postimg.cc/wjWZnTTk/wind.png" class="windimg">
+          <div>
+            <p class="wind">
+              --
+            </p>
+            <p class="humw">
+              wind speed
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const apiurl = "https://api.weatherapi.com/v1/current.json?key=8e368457193a41e082b111600241410&q=";
+    const searchbox = document.querySelector(".search input");
+    const searchbtn = document.querySelector(".search button");
+    const weathericon = document.querySelector(".weather-icon");
+
+    async function checkweather(city) {
+      try {
+        const response = await fetch(apiurl + city);
+        if (!response.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const data = await response.json();
+        console.log(data);
+        document.querySelector(".city").innerHTML = data.location.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.current.temp_c) + "∘c";
+        document.querySelector(".humidity").innerHTML = data.current.humidity + "%";
+        document.querySelector(".wind").innerHTML = data.current.wind_kph + "km/h";
+
+        if (data.current.condition.text === "Clear") {
+          weathericon.src = "https://i.postimg.cc/d0LpFPhc/clear.png";
+        } else if (data.current.condition.text === "Cloudy") {
+          weathericon.src = "https://i.postimg.cc/pVD7RBLr/clouds.png";
+        } else if (data.current.condition.text === "Mist") {
+          weathericon.src = "https://i.postimg.cc/tT6c13dr/mist.png";
+        } else if (data.current.condition.text === "Snow") {
+          weathericon.src = "https://i.postimg.cc/vTdN543G/snow.png";
+        } else if (data.current.condition.text === "Rain") {
+          weathericon.src = "https://i.postimg.cc/7YwR6T5V/rain.png";
+        } else if (data.current.condition.text === "Drizzle") {
+          weathericon.src = "https://i.postimg.cc/Hszh7s5C/drizzle.png";
+        }
+      } catch (err) {
+        alert("Error: city not found");
+      }
+    }
+
+    searchbtn.addEventListener("click", function() {
+      checkweather(searchbox.value);
+    });
+  </script>
+</body>
+</html>
